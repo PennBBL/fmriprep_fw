@@ -28,18 +28,26 @@ project_container = fw.get(analysis_container.parents['project'])
 project_label = project_container.label
 dry_run = False #config['dry_run']
 action = "Export" #config['action']
+participant_labels = config['participant_labels']
 
 # whole project, single session?
 do_whole_project = False #config['do_whole_project']
 
 if not do_whole_project:
 
-    # find session object origin
-    session_container = fw.get(analysis_container.parent['id'])
-    sessions = [session_container.label]
-    # find subject object origin
-    subject_container = fw.get(session_container.parents['subject'])
-    subjects = [subject_container.label]
+    if not participant_labels:
+
+        # find session object origin
+        session_container = fw.get(analysis_container.parent['id'])
+        sessions = [session_container.label]
+        # find subject object origin
+        subject_container = fw.get(session_container.parents['subject'])
+        subjects = [subject_container.label]
+
+    else:
+
+        sessions = None
+        subjects = participant_labels
 
 else:
     sessions = None
