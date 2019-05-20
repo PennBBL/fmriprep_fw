@@ -13,7 +13,7 @@ logger = logging.getLogger('fw-heudiconv-gear')
 logger.info("=======: fw-heudiconv starting up :=======")
 
 # start up inputs
-invocation = json.loads(open('config.json').read())
+invocation = json.loads(open('sandbox/fmriprep-0.1.10_1.2.5_5ce2f67f36da2300423a5e99/config.json').read())
 config = invocation['config']
 inputs = invocation['inputs']
 destination = invocation['destination']
@@ -29,6 +29,19 @@ project_label = project_container.label
 dry_run = False #config['dry_run']
 action = "Export" #config['action']
 participant_labels = config['participant_labels']
+
+# is there a separate t1/t2?
+if 't1w_anatomy' in inputs:
+    logger.info("Prepping seperate T1w image...")
+    t1_acq = fw.get(inputs['t1w_anatomy']['hierarchy']['id'])
+else:
+    t1_acq = None
+
+if 't2w_anatomy' in inputs:
+    logger.info("Prepping separate T2w image...")
+    t2_acq = fw.get(inputs['t2w_anatomy']['hierarchy']['id'])
+else:
+    t2_acq = None
 
 # whole project, single session?
 do_whole_project = False #config['do_whole_project']
@@ -64,13 +77,45 @@ logger.info("Dry run: {}".format(dry_run))
 
 # action
 if action == "Curate":
-
-    curate.convert_to_bids(fw, project_label, heuristic, subjects, sessions, dry_run=dry_run)
+    print("fMRIPREP isn't designed for BIDS Curation!")
+    #curate.convert_to_bids(fw, project_label, heuristic, subjects, sessions, dry_run=dry_run)
 
 elif action == "Export":
 
     downloads = export.gather_bids(fw, project_label, subjects, sessions)
     export.download_bids(fw, downloads, "/flywheel/v0/input", dry_run=dry_run)
+
+    if t1_acq:
+        logger.info("Adding additional T1w folder...")
+
+        nifti = [f for f in t1_acq.files if '.nii' in f.name].pop()
+        path = nifti.info['BIDS']['Path']
+        path = "/flywheel/v0/input/bids_dataset/" + path
+        fname = nifti.info['BIDS']['Filename']
+        sidecar = nifti.info
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        t1_acq.download_file(nifti.name, path + fname)
+        sidecar_name = fname.replace('.nii.gz', '.json')
+        export.download_sidecar(sidecar, sidecar_name)
+
+    if t2_acq:
+        logger.info("Adding additional T2w folder...")
+
+        nifti = [f for f in t2_acq.files if '.nii' in f.name].pop()
+        path = nifti.info['BIDS']['Path']
+        path = "/flywheel/v0/input/bids_dataset/" + path
+        fname = nifti.info['BIDS']['Filename']
+        sidecar = nifti.info
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        t2_acq.download_file(nifti.name, path + fname)
+        sidecar_name = fname.replace('.nii.gz', '.json')
+        export.download_sidecar(sidecar, sidecar_name)
 
     if not dry_run:
         pass
@@ -87,8 +132,8 @@ elif action == "Export":
         #         shutil.rmtree(x)
 
 elif action == "Tabulate":
-
-   tabulate.tabulate_bids(fw, project_label, "/flywheel/v0/output", subjects, sessions, dry_run=dry_run)
+    print("fMRIPREP isn't designed for BIDS Tabulation!")
+    #tabulate.tabulate_bids(fw, project_label, "/flywheel/v0/output", subjects, sessions, dry_run=dry_run)
 
 else:
 
