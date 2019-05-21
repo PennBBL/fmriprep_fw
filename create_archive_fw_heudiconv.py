@@ -13,7 +13,7 @@ logger = logging.getLogger('fw-heudiconv-gear')
 logger.info("=======: fw-heudiconv starting up :=======")
 
 # start up inputs
-invocation = json.loads(open('sandbox/fmriprep-0.1.10_1.2.5_5ce2f67f36da2300423a5e99/config.json').read())
+invocation = json.loads(open('config.json').read())
 config = invocation['config']
 inputs = invocation['inputs']
 destination = invocation['destination']
@@ -90,44 +90,44 @@ elif action == "Export":
 
         nifti = [f for f in t1_acq.files if '.nii' in f.name].pop()
         path = nifti.info['BIDS']['Path']
-        path = "/flywheel/v0/input/bids_dataset/" + path
+        path = "/flywheel/v0/input/BIDS_output/" + path
         fname = nifti.info['BIDS']['Filename']
         sidecar = nifti.info
 
         if not os.path.exists(path):
             os.makedirs(path)
 
-        if os.path.isfile(path + fname):
+        if os.path.isfile("/".join([path, fname])):
             logger.info("Overwriting current T1w image...")
-            os.remove(path + fname)
-        t1_acq.download_file(nifti.name, path + fname)
+            os.remove("/".join([path, fname]))
+        t1_acq.download_file(nifti.name, "/".join([path, fname]))
 
         sidecar_name = fname.replace('.nii.gz', '.json')
         if os.path.isfile(path + sidecar_name):
             os.remove(path + sidecar_name)
-        export.download_sidecar(sidecar, sidecar_name)
+        export.download_sidecar(sidecar, "/".join([path, sidecar_name]))
 
     if t2_acq:
         logger.info("Adding additional T2w folder...")
 
         nifti = [f for f in t2_acq.files if '.nii' in f.name].pop()
         path = nifti.info['BIDS']['Path']
-        path = "/flywheel/v0/input/bids_dataset/" + path
+        path = "/flywheel/v0/input/BIDS_output/" + path
         fname = nifti.info['BIDS']['Filename']
         sidecar = nifti.info
 
         if not os.path.exists(path):
             os.makedirs(path)
 
-        if os.path.isfile(path + fname):
+        if os.path.isfile("/".join([path, fname])):
             logger.info("Overwriting current T2w image...")
-            os.remove(path + fname)
-        t2_acq.download_file(nifti.name, path + fname)
+            os.remove("/".join([path, fname]))
+        t2_acq.download_file(nifti.name, "/".join([path, fname]))
 
         sidecar_name = fname.replace('.nii.gz', '.json')
         if os.path.isfile(path + sidecar_name):
             os.remove(path + sidecar_name)
-        export.download_sidecar(sidecar, sidecar_name)
+        export.download_sidecar(sidecar, "/".join([path, sidecar_name]))
 
     if not dry_run:
         pass
