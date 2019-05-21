@@ -97,8 +97,14 @@ elif action == "Export":
         if not os.path.exists(path):
             os.makedirs(path)
 
+        if os.path.isfile(path + fname):
+            logger.info("Overwriting current T1w image...")
+            os.remove(path + fname)
         t1_acq.download_file(nifti.name, path + fname)
+
         sidecar_name = fname.replace('.nii.gz', '.json')
+        if os.path.isfile(path + sidecar_name):
+            os.remove(path + sidecar_name)
         export.download_sidecar(sidecar, sidecar_name)
 
     if t2_acq:
@@ -113,8 +119,14 @@ elif action == "Export":
         if not os.path.exists(path):
             os.makedirs(path)
 
+        if os.path.isfile(path + fname):
+            logger.info("Overwriting current T2w image...")
+            os.remove(path + fname)
         t2_acq.download_file(nifti.name, path + fname)
+
         sidecar_name = fname.replace('.nii.gz', '.json')
+        if os.path.isfile(path + sidecar_name):
+            os.remove(path + sidecar_name)
         export.download_sidecar(sidecar, sidecar_name)
 
     if not dry_run:
