@@ -2,7 +2,7 @@
 
 ############################
 # Get the fmriprep algorithm from DockerHub
-FROM pennbbl/fmriprep:latest
+FROM poldracklab/fmriprep:1.2.5
 
 MAINTAINER Ted Satterthwaite <sattertt@upenn.edu>
 
