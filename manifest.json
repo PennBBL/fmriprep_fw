@@ -48,10 +48,10 @@
     }
   },
   "config": {
-    "participant_labels":{
-      "description": "List of participant labels, separated by spaces",
-      "default": "",
-      "type": "string"
+    "use_all_sessions":{
+      "description": "Use all sessions from this subject. [default=false]",
+      "default": false,
+      "type": "boolean"
     },
     "fs_no_reconall": {
       "description": "Use FreeSurfer to reconstruct surfaces from T1w/T2w structural images. If disabled, several steps in the fmriprep pipeline are added or replaced. [default=false]",

@@ -29,7 +29,7 @@ project_container = fw.get(analysis_container.parents['project'])
 project_label = project_container.label
 dry_run = False #config['dry_run']
 action = "Export" #config['action']
-participant_labels = config['participant_labels']
+use_all_sessions = config['use_all_sessions']
 
 # is there a separate t1/t2?
 if 't1w_anatomy' in inputs:
@@ -49,7 +49,7 @@ do_whole_project = False #config['do_whole_project']
 
 if not do_whole_project:
 
-    if not participant_labels:
+    if not use_all_sessions:
 
         # find session object origin
         session_container = fw.get(analysis_container.parent['id'])
@@ -60,8 +60,10 @@ if not do_whole_project:
 
     else:
 
+        session_container = fw.get(analysis_container.parent['id'])
         sessions = None
-        subjects = participant_labels
+        subject_container = fw.get(session_container.parents['subject'])
+        subjects = [subject_container.label]
 
 else:
     sessions = None
