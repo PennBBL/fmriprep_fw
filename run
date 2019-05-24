@@ -18,7 +18,7 @@ FMRIPREP_OUTPUT_DIR=$GEAR_OUTPUT_DIR/"$ANALYSIS_ID"
 WORKING_DIR=$GEAR_OUTPUT_DIR/"$ANALYSIS_ID"_work
 LICENSE_FILE=/opt/freesurfer/license.txt
 FREESURFER_LICENSE_DIR=$INPUT_DIR/freesurfer_license
-BIDS_DIR=$INPUT_DIR/BIDS_output
+BIDS_DIR=$INPUT_DIR/bids_dataset
 CONTAINER='[flywheel/fmriprep]'
 
 
@@ -258,7 +258,7 @@ ls -R ${BIDS_DIR}
 
 ################################################################################
 # RUN FMRIPREP
-export NODE_OPTIONS="--max-old-space-size=4096"
+export NODE_OPTIONS="--max-old-space-size=6000"
 time /usr/local/miniconda/bin/fmriprep \
       ${BIDS_DIR} \
       ${FMRIPREP_OUTPUT_DIR} \

@@ -5,6 +5,7 @@ import os
 import shutil
 import logging
 from fw_heudiconv.cli import curate, export, tabulate
+from fw_heudiconv.query import print_directory_tree
 
 
 # logging stuff
@@ -90,7 +91,7 @@ elif action == "Export":
 
         nifti = [f for f in t1_acq.files if '.nii' in f.name].pop()
         path = nifti.info['BIDS']['Path']
-        path = "/flywheel/v0/input/BIDS_output/" + path
+        path = "/flywheel/v0/input/bids_dataset/" + path
         fname = nifti.info['BIDS']['Filename']
         sidecar = nifti.info
 
@@ -112,7 +113,7 @@ elif action == "Export":
 
         nifti = [f for f in t2_acq.files if '.nii' in f.name].pop()
         path = nifti.info['BIDS']['Path']
-        path = "/flywheel/v0/input/BIDS_output/" + path
+        path = "/flywheel/v0/input/bids_dataset/" + path
         fname = nifti.info['BIDS']['Filename']
         sidecar = nifti.info
 
@@ -128,6 +129,10 @@ elif action == "Export":
         if os.path.isfile(path + sidecar_name):
             os.remove(path + sidecar_name)
         export.download_sidecar(sidecar, "/".join([path, sidecar_name]))
+
+    if t1_acq or t2_acq:
+        logger.info("Final directory tree with additional anatomical files:")
+        print_directory_tree("/flywheel/v0/input/bids_dataset")
 
     if not dry_run:
         pass
