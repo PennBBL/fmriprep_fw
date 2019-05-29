@@ -41,6 +41,7 @@ ADD https://raw.githubusercontent.com/poldracklab/fmriprep/${FMRIPREP_VERSION}/D
 ############################
 # Copy over python scripts that generate the BIDS hierarchy
 COPY create_archive_fw_heudiconv.py /flywheel/v0/create_archive_fw_heudiconv.py
+COPY move_to_project.py /flywheel/v0/move_to_project.py
 RUN chmod +x ${FLYWHEEL}/*
 
 
