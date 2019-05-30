@@ -8,7 +8,7 @@
   "maintainer": "Ted Satterthwaite <sattertt@upenn.edu>",
   "source": "https://github.com/pennbbl/fmriprep",
   "url": "https://fmriprep.readthedocs.io/en/1.2.5/",
-  "version": "0.1.14_1.2.5",
+  "version": "0.1.15_1.2.5",
   "custom": {
     "gear-builder": {
       "category": "analysis",
@@ -206,6 +206,11 @@
       "description": "Text from license file generated during FreeSurfer registration. *Entries should be space separated*",
       "type": "string",
       "optional": true
+    },
+    "sloppy_mode": {
+      "description": "Use low-quality tools for speed - TESTING ONLY",
+      "type": "boolean",
+      "default": false
     }
   }
 }

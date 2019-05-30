@@ -69,6 +69,7 @@ config_force_no_bbr="$(parse_config 'force_no_bbr')"
 config_template="$(parse_config 'template')"
 config_template_resampling_grid="$(parse_config 'template_resampling_grid')"
 config_medial_surface_nan="$(parse_config 'medial_surface_nan')"
+config_sloppy_mode="$(parse_config 'sloppy_mode')"
 
 
 template_FLAG='--template '${config_template}
@@ -204,6 +205,16 @@ else
 fi
 
 ################################################################################
+# Sloppy mode
+
+# Boolean parsing of sloppy config option
+if [[ $config_sloppy_mode == 'false' ]]; then
+  sloppy_FLAG=''
+else
+  sloppy_FLAG='--sloppy'
+fi
+
+################################################################################
 # Freesurfer License
 
 ########################
@@ -284,7 +295,8 @@ time /usr/local/miniconda/bin/fmriprep \
       ${use_syn_sdc_FLAG} \
       ${force_syn_FLAG} \
       ${no_submm_recon_FLAG} \
-      ${cifti_output_FLAG}
+      ${cifti_output_FLAG} \
+      ${sloppy_FLAG}
 
 
 FMRIPREP_EXITSTATUS=$?
@@ -345,6 +357,16 @@ if [[ $FMRIPREP_EXITSTATUS == 0 ]] ; then
   fi
   chmod -R 777 $GEAR_OUTPUT_DIR
 
+  ################################################################################
+  # COPY ANALYSIS TO PROJECT LEVEL IF MULTI-SESSION
+  #   Use Python SDK to accomplish this task
+
+  /usr/local/miniconda/bin/python ${FLYWHEEL_BASE}/move_to_project.py
+  if [[ $? != 0 ]]; then
+    echo "$CONTAINER  Problem resolving multi-session structure! Exiting (1)"
+    exit 1
+  fi
+
 elif [[ $config_save_outputs == 'true' ]] ; then
   echo "$CONTAINER  Error occurred. Config 'save_outputs' set to true. Zipping up outputs."
   cd "$GEAR_OUTPUT_DIR"
@@ -354,16 +376,6 @@ elif [[ $config_save_outputs == 'true' ]] ; then
 
 else
   echo "$CONTAINER  Errors encountered during execution. Save outputs config not set. Cleaning up and exiting."
-fi
-
-################################################################################
-# COPY ANALYSIS TO PROJECT LEVEL IF MULTI-SESSION
-#   Use Python SDK to accomplish this task
-
-/usr/local/miniconda/bin/python ${FLYWHEEL_BASE}/move_to_project.py
-if [[ $? != 0 ]]; then
-  echo "$CONTAINER  Problem resolving multi-session structure! Exiting (1)"
-  exit 1
 fi
 
 # Clean up
