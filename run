@@ -374,6 +374,16 @@ elif [[ $config_save_outputs == 'true' ]] ; then
   time zip -q -r "$GEAR_OUTPUT_DIR"/debug_fmriprep_work_"$ANALYSIS_ID" $(basename "$WORKING_DIR")
   chmod -R 777 $GEAR_OUTPUT_DIR
 
+  ################################################################################
+  # COPY ANALYSIS TO PROJECT LEVEL IF MULTI-SESSION
+  #   Use Python SDK to accomplish this task
+
+  /usr/local/miniconda/bin/python ${FLYWHEEL_BASE}/move_to_project.py
+  if [[ $? != 0 ]]; then
+    echo "$CONTAINER  Problem resolving multi-session structure! Exiting (1)"
+    exit 1
+  fi
+
 else
   echo "$CONTAINER  Errors encountered during execution. Save outputs config not set. Cleaning up and exiting."
 fi

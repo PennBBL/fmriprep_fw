@@ -53,7 +53,6 @@ if outputs:
             logger.info("You should find your analysis in Projects -> {} -> Analyses".format(project_label))
         except Exception as e:
             logger.warning("Failed to copy multi-session analysis to the project level!")
-            logger.warning("Your gear possibly still ran successfully, please check the origin for the analysis, ID: {}".format(analysis_container.id))
             logger.warning(e)
             sys.exit(0)
         logger.info("Done!")
