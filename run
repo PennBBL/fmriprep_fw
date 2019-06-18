@@ -244,7 +244,7 @@ fi
 
 ################################################################################
 # CREATE A BIDS FORMATTED DIRECTORY
-#   Use Python SDK to accomplish this task
+#   Use fw-heudiconv to accomplish this task
 
 /usr/local/miniconda/bin/python ${FLYWHEEL_BASE}/create_archive_fw_heudiconv.py
 if [[ $? != 0 ]]; then
@@ -271,6 +271,7 @@ ls -R ${BIDS_DIR}
 # RUN FMRIPREP
 export NODE_OPTIONS="--max-old-space-size=6000"
 time /usr/local/miniconda/bin/fmriprep \
+      --skip_bids_validation \
       ${BIDS_DIR} \
       ${FMRIPREP_OUTPUT_DIR} \
       participant \
