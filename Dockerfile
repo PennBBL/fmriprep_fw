@@ -21,7 +21,6 @@ RUN apt-get update && apt-get -y install \
 # Install the Flywheel SDK
 RUN pip install 'flywheel-sdk==6.0.6'
 RUN pip install heudiconv
-RUN pip install fw-heudiconv
 
 ############################
 # Make directory for flywheel spec (v0)
@@ -43,6 +42,8 @@ ADD https://raw.githubusercontent.com/poldracklab/fmriprep/${FMRIPREP_VERSION}/D
 COPY create_archive_fw_heudiconv.py /flywheel/v0/create_archive_fw_heudiconv.py
 COPY move_to_project.py /flywheel/v0/move_to_project.py
 RUN chmod +x ${FLYWHEEL}/*
+
+RUN pip install fw-heudiconv -U
 
 
 ############################
