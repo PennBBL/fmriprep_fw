@@ -228,7 +228,7 @@ if [[ -d "$FREESURFER_LICENSE_DIR" ]]; then
   fs_file=$(find $FREESURFER_LICENSE_DIR/* -type f | head -1)
   if [[ -n "$fs_file" ]]; then
     echo "    -->Generating FREESURFER LICENSE file from $fs_file"
-    cp "$fs_file" ${LICENSE_FILE}
+    LICENSE_FILE="$fs_file"
     need_license=0
   fi
 fi
