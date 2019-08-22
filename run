@@ -297,7 +297,8 @@ time /usr/local/miniconda/bin/fmriprep \
       ${force_syn_FLAG} \
       ${no_submm_recon_FLAG} \
       ${cifti_output_FLAG} \
-      ${sloppy_FLAG}
+      ${sloppy_FLAG} \
+      --fs-license-file ${LICENSE_FILE}
 
 
 FMRIPREP_EXITSTATUS=$?
