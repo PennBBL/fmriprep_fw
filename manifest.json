@@ -216,6 +216,31 @@
       "description": "Attempt to use low memory",
       "type": "boolean",
       "default": false
+    },
+    "sge-cpu": {
+      "type": "string",
+      "default": "8",
+      "description": "[SGE] How many cores to request. This is used for the underlying '-pe threaded' option."
+    },
+    "sge-ram": {
+      "type": "string",
+      "default": "64G",
+      "description": "[SGE] How much RAM to request. This is used for the underlying '-l h_vmem' option."
+    },
+    "sge-short": {
+      "type": "boolean",
+      "default": false,
+      "description": "[SGE] Tell the cluster this is a short job. This caps the job to 90 minutes wall-clock and 15 minutes of CPU."
+    },
+    "singularity-debug": {
+      "type": "boolean",
+      "default": false,
+      "description": "[Singularity] Enable verbose logging."
+    },
+    "singularity-writable": {
+      "type": "boolean",
+      "default": false,
+      "description": "[Singularity] Mount the container as writable."
     }
   }
 }
