@@ -86,14 +86,14 @@ if action == "Curate":
 elif action == "Export":
 
     downloads = export.gather_bids(fw, project_label, subjects, sessions)
-    export.download_bids(fw, downloads, "/flywheel/v0/input", dry_run=dry_run)
+    export.download_bids(fw, downloads, "/flywheel/v0/output", dry_run=dry_run)
 
     if t1_acq:
         logger.info("Adding additional T1w folder...")
 
         nifti = [f for f in t1_acq.files if '.nii' in f.name].pop()
         path = nifti.info['BIDS']['Path']
-        path = "/flywheel/v0/input/bids_dataset/" + path
+        path = "/flywheel/v0/output/bids_dataset/" + path
         fname = nifti.info['BIDS']['Filename']
         sidecar = nifti.info
 
@@ -115,7 +115,7 @@ elif action == "Export":
 
         nifti = [f for f in t2_acq.files if '.nii' in f.name].pop()
         path = nifti.info['BIDS']['Path']
-        path = "/flywheel/v0/input/bids_dataset/" + path
+        path = "/flywheel/v0/output/bids_dataset/" + path
         fname = nifti.info['BIDS']['Filename']
         sidecar = nifti.info
 
@@ -134,7 +134,7 @@ elif action == "Export":
 
     if t1_acq or t2_acq:
         logger.info("Final directory tree with additional anatomical files:")
-        print_directory_tree("/flywheel/v0/input/bids_dataset")
+        print_directory_tree("/flywheel/v0/output/bids_dataset")
 
     if not dry_run:
         pass
