@@ -59,6 +59,7 @@ config_intermediate_folders="$(parse_config 'intermediate_folders')"
 ##################
 # Workflow Options
 config_ignore="$(parse_config 'ignore')"
+config_anat_only="$(parse_config 'anat_only')"
 config_longitudinal="$(parse_config 'longitudinal')"
 config_t2s_coreg="$(parse_config 't2s_coreg')"
 config_bold2t1w_dof="$(parse_config 'bold2t1w_dof')"
@@ -86,6 +87,12 @@ if [[ $config_longitudinal == 'false' ]]; then
   longitudinal_FLAG=''
 else
   longitudinal_FLAG='--longitudinal'
+fi
+
+if [[ $config_anat_only == 'false' ]]; then
+  anat_only_FLAG=''
+else
+  anat_only_FLAG='--anat-only'
 fi
 
 if [[ $config_t2s_coreg == 'false' ]]; then
@@ -269,12 +276,44 @@ ls -R ${BIDS_DIR}
 ################################################################################
 # RUN FMRIPREP
 export NODE_OPTIONS="--max-old-space-size=6000"
+echo "Call:"
+echo /usr/local/miniconda/bin/fmriprep \
+      --skip_bids_validation \
+      ${BIDS_DIR} \
+      ${FMRIPREP_OUTPUT_DIR} \
+      participant \
+      -w ${WORKING_DIR} \
+      ${anat_only_FLAG} \
+      ${freesurfer_FLAG} \
+      ${ignore_FLAG} \
+      ${longitudinal_FLAG} \
+      ${t2s_coreg_FLAG} \
+      ${bold2t1w_dof_FLAG} \
+      ${output_space_FLAG} \
+      ${force_bbr_FLAG} \
+      ${force_no_bbr_FLAG} \
+      ${template_FLAG} \
+      ${template_resampling_grid_FLAG} \
+      ${medial_surface_nan_FLAG} \
+      ${use_aroma_FLAG} \
+      ${aroma_melodic_dimensionality_FLAG} \
+      ${skull_strip_template_FLAG} \
+      ${skull_strip_fixed_seed_FLAG} \
+      ${fmap_bspline_FLAG} \
+      ${fmap_no_demean_FLAG} \
+      ${use_syn_sdc_FLAG} \
+      ${force_syn_FLAG} \
+      ${no_submm_recon_FLAG} \
+      ${cifti_output_FLAG} \
+      ${sloppy_FLAG} \
+      --fs-license-file ${LICENSE_FILE}
 time /usr/local/miniconda/bin/fmriprep \
       --skip_bids_validation \
       ${BIDS_DIR} \
       ${FMRIPREP_OUTPUT_DIR} \
       participant \
       -w ${WORKING_DIR} \
+      ${anat_only_FLAG} \
       ${freesurfer_FLAG} \
       ${ignore_FLAG} \
       ${longitudinal_FLAG} \
