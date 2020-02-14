@@ -2,11 +2,11 @@
 
 ############################
 # Get the fmriprep algorithm from DockerHub
-FROM poldracklab/fmriprep:1.2.6-1
+FROM poldracklab/fmriprep:1.5.2
 
 MAINTAINER Ted Satterthwaite <sattertt@upenn.edu>
 
-ENV FMRIPREP_VERSION 1.2.5
+ENV FMRIPREP_VERSION 1.5.2
 
 ############################
 # Install basic dependencies
@@ -39,6 +39,7 @@ ADD https://raw.githubusercontent.com/poldracklab/fmriprep/${FMRIPREP_VERSION}/D
 
 ############################
 # Copy over python scripts that generate the BIDS hierarchy
+COPY prepare_run.py /flywheel/v0/prepare_run.py
 COPY create_archive_fw_heudiconv.py /flywheel/v0/create_archive_fw_heudiconv.py
 COPY move_to_project.py /flywheel/v0/move_to_project.py
 RUN chmod +x ${FLYWHEEL}/*
