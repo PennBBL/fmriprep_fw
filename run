@@ -351,9 +351,9 @@ if [[ $FMRIPREP_EXITSTATUS == 0 ]] ; then
   # Convert index to standalone zip archive
   html_file=$(find "$FMRIPREP_OUTPUT_DIR"/fmriprep/ -name "sub-*.html")
   SUB_ID=$(basename "$html_file" .html)
-  SES_PATH=$(find fmriprep/ -type d -iname "ses*")
+  SES_PATH=$(find "$FMRIPREP_OUTPUT_DIR"/fmriprep/ -type d -iname "ses*")
   SES_ID=$(basename "$SES_PATH")
-  
+
   if [[ -n "$html_file" ]]; then
     echo "$CONTAINER  Converting output html report..."
     output_html_file="$GEAR_OUTPUT_DIR"/`basename "$html_file" .html`_"$ANALYSIS_ID".html.zip

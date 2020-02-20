@@ -1,5 +1,5 @@
 {
-  "name": "fmriprep_fw",
+  "name": "fmriprep-fwheudiconv",
   "label": "fMRIPREP: A Robust Preprocessing Pipeline for fMRI Data [fw-heudiconv]",
   "description": "[Powered by fw-heudiconv] fmriprep is a functional magnetic resonance imaging (fMRI) data preprocessing pipeline that is designed to provide an easily accessible, state-of-the-art interface that is robust to variations in scan acquisition protocols and that requires minimal user input, while providing easily interpretable and comprehensive error and output reporting. It performs basic processing steps (coregistration, normalization, unwarping, noise component extraction, segmentation, skullstripping etc.) providing outputs that can be easily submitted to a variety of group level analyses, including task-based or resting-state fMRI, graph theory measures, surface or volume-based statistics, etc.",
   "version": "1.5.2",
@@ -8,11 +8,11 @@
   "maintainer": "Ted Satterthwaite <sattertt@upenn.edu>",
   "source": "https://github.com/pennbbl/fmriprep",
   "url": "https://fmriprep.readthedocs.io/en/1.5.2/",
-  "version": "0.2.2_1.5.2",
+  "version": "0.2.3_1.5.2",
   "custom": {
     "gear-builder": {
       "category": "analysis",
-      "image": "pennbbl/fmriprep_fw:0.2.2_1.5.2"
+      "image": "pennbbl/fmriprep_fw:0.2.3_1.5.2"
     },
     "flywheel":{"suite": "PennBBL"}
   },
