@@ -19,7 +19,7 @@ RUN apt-get update && apt-get -y install \
 
 ############################
 # Install the Flywheel SDK
-RUN pip install 'flywheel-sdk==6.0.6'
+RUN pip install 'flywheel-sdk==11.*'
 RUN pip install heudiconv
 
 ############################

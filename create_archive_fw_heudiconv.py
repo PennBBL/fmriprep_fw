@@ -5,7 +5,7 @@ import os
 import shutil
 import logging
 from fw_heudiconv.cli import curate, export, tabulate
-from fw_heudiconv.query import print_directory_tree
+from fw_heudiconv.backend_funcs.query import print_directory_tree
 
 
 # logging stuff
