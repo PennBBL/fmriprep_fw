@@ -20,7 +20,7 @@ RUN apt-get update && apt-get -y install \
 ############################
 # Install the Flywheel SDK
 RUN pip install 'flywheel-sdk==11.*'
-RUN pip install heudiconv
+RUN pip install heudiconv validators
 
 ############################
 # Make directory for flywheel spec (v0)
