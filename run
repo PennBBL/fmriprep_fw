@@ -252,7 +252,7 @@ fi
 # CREATE A BIDS FORMATTED DIRECTORY
 #   Use fw-heudiconv to accomplish this task
 
-/usr/local/miniconda/bin/python ${FLYWHEEL_BASE}/create_archive_fw_heudiconv.py
+timeout 30m /usr/local/miniconda/bin/python ${FLYWHEEL_BASE}/create_archive_fw_heudiconv.py
 if [[ $? != 0 ]]; then
   echo "$CONTAINER  Problem creating archive! Exiting (1)"
   rm -rf ${BIDS_DIR}
