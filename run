@@ -404,7 +404,7 @@ if [[ $FMRIPREP_EXITSTATUS == 0 ]] ; then
   # COPY ANALYSIS TO PROJECT LEVEL IF MULTI-SESSION
   #   Use Python SDK to accomplish this task
 
-  /usr/local/miniconda/bin/python ${FLYWHEEL_BASE}/move_to_project.py
+  timeout 30m /usr/local/miniconda/bin/python ${FLYWHEEL_BASE}/move_to_project.py
   if [[ $? != 0 ]]; then
     echo "$CONTAINER  Problem resolving multi-session structure! Exiting (1)"
     exit 1
@@ -421,7 +421,7 @@ elif [[ $config_save_outputs == 'true' ]] ; then
   # COPY ANALYSIS TO PROJECT LEVEL IF MULTI-SESSION
   #   Use Python SDK to accomplish this task
 
-  /usr/local/miniconda/bin/python ${FLYWHEEL_BASE}/move_to_project.py
+  timeout 30m /usr/local/miniconda/bin/python ${FLYWHEEL_BASE}/move_to_project.py
   if [[ $? != 0 ]]; then
     echo "$CONTAINER  Problem resolving multi-session structure! Exiting (1)"
     exit 1
