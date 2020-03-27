@@ -8,11 +8,11 @@
   "maintainer": "Ted Satterthwaite <sattertt@upenn.edu>",
   "source": "https://github.com/pennbbl/fmriprep",
   "url": "https://fmriprep.readthedocs.io/en/20.0.5/",
-  "version": "0.3.0_20.0.5",
+  "version": "0.3.1_20.0.5",
   "custom": {
     "gear-builder": {
       "category": "analysis",
-      "image": "pennbbl/fmriprep-fwheudiconv:0.3.0_20.0.5"
+      "image": "pennbbl/fmriprep-fwheudiconv:0.3.1_20.0.5"
     },
     "flywheel":{"suite": "PennBBL"}
   },

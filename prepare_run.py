@@ -45,6 +45,7 @@ with flywheel.GearContext() as context:
     use_all_sessions = config.get('use_all_sessions', False)
 
 
+
 def write_fmriprep_command():
     """Create a command script."""
     with flywheel.GearContext() as context:
@@ -62,12 +63,12 @@ def write_fmriprep_command():
             '--run-uuid', analysis_id]
 
         # External FreeSurfer Input
-        if config.get_input_path("freesurfer_input"):
-            cmd += ['--fs-subjects-dir', config.get_input_path("freesurfer_input")]
+        if context.get_input_path("freesurfer_input"):
+            cmd += ['--fs-subjects-dir', context.get_input_path("freesurfer_input")]
 
         # JSON file that contains a file filter
-        if config.get_input_path("bids_filter_file"):
-            cmd += ['--bids-filter-file', config.get_input_path("bids_filter_file")]
+        if context.get_input_path("bids_filter_file"):
+            cmd += ['--bids-filter-file', context.get_input_path("bids_filter_file")]
 
         if config.get('skip_bids_validation'):
             cmd.append('--skip-bids-validation')
