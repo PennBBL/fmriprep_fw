@@ -10,6 +10,7 @@ WORKING_DIR=$GEAR_OUTPUT_DIR/"$ANALYSIS_ID"_work
 FREESURFER_LICENSE_DIR=$INPUT_DIR/freesurfer_license
 BIDS_DIR=$GEAR_OUTPUT_DIR/bids_dataset
 CONTAINER='[flywheel/fmriprep]'
+EXE_SCRIPT=$GEAR_OUTPUT_DIR/fmriprep_run.sh
 
 # CRITICAL: re-create the environment
 cat ${FLYWHEEL_BASE}/docker-env.sh
@@ -33,6 +34,7 @@ config_save_intermediate_work="$(parse_config 'save_intermediate_work')"
 config_intermediate_files="$(parse_config 'intermediate_files')"
 config_intermediate_folders="$(parse_config 'intermediate_folders')"
 config_timeout_days="$(parse_config 'timeout')"
+timeout_days=${config_timeout_days%.*}
 
 echo -e "$CONTAINER BEGIN FMRIPREP DOCKERFILE\n"
 cat ${FLYWHEEL_BASE}/*Dockerfile
@@ -48,7 +50,7 @@ fi
 
 # RUN QSIPREP
 export NODE_OPTIONS="--max-old-space-size=6000"
-timeout ${config_timeout_days}d time bash /flywheel/v0/output/fmriprep_run.sh
+timeout ${timeout_days}d bash /flywheel/v0/output/fmriprep_run.sh
 
 FMRIPREP_EXITSTATUS=$?
 

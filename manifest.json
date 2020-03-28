@@ -275,6 +275,11 @@
 
 
 
+    "timeout":{
+      "description": "Maximum number of days that fmriprep can run",
+      "type": "number",
+      "default": 2
+    },
     "sge-cpu": {
       "type": "string",
       "default": "8",

@@ -53,7 +53,7 @@ def write_fmriprep_command():
         # Mandatory arguments
         cmd = [
             '/usr/local/miniconda/bin/fmriprep',
-            '--stop_on_first_crash', '-v', '-v',
+            '--stop-on-first-crash', '-v', '-v',
             str(bids_root),
             str(output_root),
             'participant',
@@ -81,9 +81,9 @@ def write_fmriprep_command():
         if config.get('longitudinal', False):
             cmd.append('--longitudinal')
         if config.get('t2s_coreg'):
-            cmd.append('--t2s_coreg')
+            cmd.append('--t2s-coreg')
         if config.get('bold2t1w_dof'):
-            cmd += ['--bold2t1w_dof', str(config.get('bold2t1w_dof'))]
+            cmd += ['--bold2t1w-dof', str(config.get('bold2t1w_dof'))]
         if config.get('force_bbr'):
             cmd.append('--force-bbr')
         if config.get('force_no_bbr'):
@@ -110,7 +110,7 @@ def write_fmriprep_command():
         if config.get('skull_strip_fixed_seed'):
             cmd.append('--skull-strip-fixed-seed')
         if config.get('skull_strip_template'):
-            cmd += ['--skull_strip_template', config.get('skull_strip_template')]
+            cmd += ['--skull-strip-template', config.get('skull_strip_template')]
 
         # Fieldmap options
         if config.get('fmap_bspline', False):
@@ -138,12 +138,8 @@ def write_fmriprep_command():
         if config.get('sge-cpu'):
             # Parse SGE cpu syntax, such as "4-8" or just "4"
             cpuMin = int(config.get('sge-cpu').split('-')[0])
-            cmd += ['--n_cpus', str(max(1, cpuMin - 1))]
+            cmd += ['--nthreads', str(max(1, cpuMin - 1))]
 
-        if config.get('sge-cpu'):
-            # Parse SGE cpu syntax, such as "4-8" or just "4"
-            cpuMin = int(config.get('sge-cpu').split('-')[0])
-            cmd += ['--n_cpus', str(max(1, cpuMin - 1))]
         if config.get('notrack'):
             cmd.append('--notrack')
         if config.get('sloppy', False):
