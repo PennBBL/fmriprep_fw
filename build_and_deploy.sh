@@ -7,7 +7,8 @@ echo "Don't forget to PR the gear exchange"
 
 # Configure the
 git checkout hpc
-sed -i 's/fmriprep-fwheudiconv:\([^-]\)/fmriprep-fw-hpc:\1/g' manifest.json
+git merge master -X theirs
+python build_hpc.py
 IMAGENAME=$(cat manifest.json | grep \"image\": | sed 's/^.*"image": "\(.*\)".*/\1/')
 docker build -t ${IMAGENAME} .
 docker push ${IMAGENAME}
