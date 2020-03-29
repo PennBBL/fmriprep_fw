@@ -7,7 +7,8 @@ echo "Don't forget to PR the gear exchange"
 
 # Configure the
 git checkout hpc
-git merge master -X theirs
+git merge master 
+git checkout --theirs manifest.json
 python build_hpc.py
 IMAGENAME=$(cat manifest.json | grep \"image\": | sed 's/^.*"image": "\(.*\)".*/\1/')
 docker build -t ${IMAGENAME} .
