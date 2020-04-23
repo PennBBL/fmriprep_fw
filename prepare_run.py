@@ -206,7 +206,6 @@ def fw_heudiconv_download():
     bold_files = [fname for fname in bids_root.glob("**/*") if "func/" in str(fname)]
     if not len(bold_files):
         logger.warning("No BOLD files found in %s", bids_root)
-        return False
     return True
 
 
