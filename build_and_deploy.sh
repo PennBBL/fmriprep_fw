@@ -7,7 +7,7 @@ echo "Don't forget to PR the gear exchange"
 
 # Configure the
 git checkout hpc
-git merge master 
+git merge master
 git checkout --theirs manifest.json
 python build_hpc.py
 git commit -m 'update hpc'
