@@ -2,11 +2,11 @@
 
 ############################
 # Get the fmriprep algorithm from DockerHub
-FROM poldracklab/fmriprep:20.0.5
+FROM poldracklab/fmriprep:20.0.7
 
 MAINTAINER Ted Satterthwaite <sattertt@upenn.edu>
 
-ENV FMRIPREP_VERSION 20.0.5
+ENV FMRIPREP_VERSION 20.0.7
 
 ############################
 # Install basic dependencies
