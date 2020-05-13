@@ -6,12 +6,12 @@
   "cite": "Esteban O, Blair R, Markiewicz CJ, Berleant SL, Moodie C, Ma F, Isik AI, Erramuzpe A, Kent JD, Goncalves M, Poldrack RA, Gorgolewski KJ; poldracklab/fmriprep: 1.0.0-rc9. Zenodo; 2017. doi:10.5281/zenodo.1041020  FOR MORE INFORMATION SEE: http://fmriprep.readthedocs.io/en/stable/citing.html.",
   "maintainer": "Ted Satterthwaite <sattertt@upenn.edu>",
   "source": "https://github.com/pennbbl/fmriprep",
-  "url": "https://fmriprep.readthedocs.io/en/20.0.5/",
-  "version": "0.3.4_20.0.5",
+  "url": "https://fmriprep.readthedocs.io/en/20.0.7/",
+  "version": "0.3.4_20.0.7",
   "custom": {
     "gear-builder": {
       "category": "analysis",
-      "image": "pennbbl/fmriprep-hpc:0.3.4_20.0.5"
+      "image": "pennbbl/fmriprep-hpc:0.3.4_20.0.7"
     },
     "flywheel":{"suite": "Runs on HPC [Experimental]"}
   },
