@@ -19,7 +19,7 @@ config = invocation['config']
 inputs = invocation['inputs']
 destination = invocation['destination']
 
-fw = flywheel.Flywheel(inputs['api_key']['key'])
+fw = flywheel.Client(inputs['api_key']['key']) # given that this docker image is pinned to 11.*
 user = fw.get_current_user()
 
 # start up logic:

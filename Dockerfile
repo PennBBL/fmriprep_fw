@@ -2,11 +2,11 @@
 
 ############################
 # Get the fmriprep algorithm from DockerHub
-FROM poldracklab/fmriprep:1.5.2
+FROM poldracklab/fmriprep:20.0.5
 
 MAINTAINER Ted Satterthwaite <sattertt@upenn.edu>
 
-ENV FMRIPREP_VERSION 1.5.2
+ENV FMRIPREP_VERSION 20.0.5
 
 ############################
 # Install basic dependencies
@@ -20,7 +20,7 @@ RUN apt-get update && apt-get -y install \
 ############################
 # Install the Flywheel SDK
 RUN pip install 'flywheel-sdk==11.*'
-RUN pip install heudiconv
+RUN pip install heudiconv validators
 
 ############################
 # Make directory for flywheel spec (v0)

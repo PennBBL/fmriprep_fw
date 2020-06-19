@@ -1,7 +1,6 @@
 #!/usr/local/miniconda/bin/python
 import sys
 import logging
-import shutil
 from zipfile import ZipFile
 from pathlib import PosixPath
 from fw_heudiconv.cli import export
@@ -21,7 +20,6 @@ with flywheel.GearContext() as context:
     # context.log_config()
     config = context.config
     ignore = config.get('ignore', '').split()
-    output_space = config.get('output_space', '').split()
     analysis_id = context.destination['id']
     gear_output_dir = PosixPath(context.output_dir)
     fmriprep_script = gear_output_dir / "fmriprep_run.sh"
@@ -36,6 +34,7 @@ with flywheel.GearContext() as context:
     session_container = fw.get(analysis_container.parent['id'])
     subject_container = fw.get(session_container.parents['subject'])
 
+    # Flywheel-specific options
     project_label = project_container.label
     extra_t1 = context.get_input('t1_anatomy')
     extra_t1_path = None if extra_t1 is None else \
@@ -45,52 +44,75 @@ with flywheel.GearContext() as context:
         PosixPath(context.get_input_path('t2_anatomy'))
     use_all_sessions = config.get('use_all_sessions', False)
 
-    # output zips
-    html_zipfile = gear_output_dir / (analysis_id + "_fmriprep_html.zip")
-    derivatives_zipfile = gear_output_dir / (analysis_id + "_fmriprep_derivatives.zip")
-    debug_derivatives_zipfile = gear_output_dir / (
-        analysis_id + "_debug_fmriprep_derivatives.zip")
-    working_dir_zipfile = gear_output_dir / (analysis_id + "_fmriprep_workdir.zip")
-    errorlog_zipfile = gear_output_dir / (analysis_id + "_fmriprep_errorlog.zip")
 
 
 def write_fmriprep_command():
     """Create a command script."""
     with flywheel.GearContext() as context:
+
+        # Mandatory arguments
         cmd = [
             '/usr/local/miniconda/bin/fmriprep',
-            '--stop_on_first_crash', '-v', '-v',
-            str(bids_root), str(output_root), 'participant',
+            '--stop-on-first-crash', '-v', '-v',
+            str(bids_root),
+            str(output_root),
+            'participant',
             '--fs-license-file', context.get_input_path('freesurfer_license'),
-            '--hmc-transform', config.get('hmc_transform', 'Affine'),
             '-w', str(working_dir),
-            '--output-space', config.get('output_space'),
-            '--run-uuid', analysis_id,
-            '--template', config.get('template', 'MNI152NLin2009cAsym'),
-            '--template-resampling-grid', config.get('template_resampling_grid')]
-        # if acquisition_type is not None:
-        #     cmd += ['--acquisition_type', acquisition_type]
-        # If on HPC, get the cores/memory limits
-        # anat_only=False,
-        if config.get("ignore"):
-            cmd += ['--ignore', config.get("ignore")]
+            '--output-spaces', config.get('output_spaces'),
+            '--run-uuid', analysis_id]
+
+        # External FreeSurfer Input
+        if context.get_input_path("freesurfer_input"):
+            cmd += ['--fs-subjects-dir', context.get_input_path("freesurfer_input")]
+
+        # JSON file that contains a file filter
+        if context.get_input_path("bids_filter_file"):
+            cmd += ['--bids-filter-file', context.get_input_path("bids_filter_file")]
+
+        if config.get('skip_bids_validation'):
+            cmd.append('--skip-bids-validation')
+        if config.get('task_id'):
+            cmd += ['--task-id', config.get('task_id')]
         if config.get('anat_only', False):
             cmd.append('--anat-only')
+        if config.get("ignore"):
+            cmd += ['--ignore', config.get("ignore")]
         if config.get('longitudinal', False):
             cmd.append('--longitudinal')
         if config.get('t2s_coreg'):
-            cmd.append('--t2s_coreg')
+            cmd.append('--t2s-coreg')
         if config.get('bold2t1w_dof'):
-            cmd += ['--bold2t1w_dof', config.get('bold2t1w_dof')]
+            cmd += ['--bold2t1w-dof', str(config.get('bold2t1w_dof'))]
         if config.get('force_bbr'):
             cmd.append('--force-bbr')
         if config.get('force_no_bbr'):
             cmd.append('--force-no-bbr')
+        if config.get('dummy_scans'):
+            cmd += ['--dummy-scans', str(config.get('dummy_scans'))]
+
+        # Aroma options
         if config.get('use_aroma'):
             cmd.append('--use-aroma')
             if config.get('aroma_melodic_dimensionality'):
                 cmd += ['--aroma-melodic-dimensionality',
-                        config.get('aroma_melodic_dimensionality')]
+                        '%d' % config.get('aroma_melodic_dimensionality')]
+
+        # Confounds options
+        if config.get('return_all_components'):
+            cmd.append('--return-all-components')
+        if config.get('fd_spike_threshold'):
+            cmd += ['--fd-spike-threshold', str(config.get('fd_spike_threshold'))]
+        if config.get('dvars_spike_threshold'):
+            cmd += ['--dvars-spike-threshold', str(config.get('dvars_spike_threshold'))]
+
+        # Specific options for ANTs registrations
+        if config.get('skull_strip_fixed_seed'):
+            cmd.append('--skull-strip-fixed-seed')
+        if config.get('skull_strip_template'):
+            cmd += ['--skull-strip-template', config.get('skull_strip_template')]
+
+        # Fieldmap options
         if config.get('fmap_bspline', False):
             cmd.append('--fmap-bspline')
         if config.get('fmap_no_demean', False):
@@ -102,34 +124,26 @@ def write_fmriprep_command():
         if config.get('use_syn_sdc', False):
             cmd.append('--use-syn-sdc')
 
-        # Specific options for ANTs registrations
-        if config.get('skull_strip_fixed_seed'):
-            cmd.append('--skull-strip-fixed-seed')
-        if config.get('skull_strip_template'):
-            cmd += ['--skull_strip_template', config.get('skull_strip_template')]
-        if config.get('template_resampling_grid'):
-            cmd += ['--template-resampling-grid',
-                    config.get('template_resampling_grid')]
-        if config.get('sge-cpu'):
-            # Parse SGE cpu syntax, such as "4-8" or just "4"
-            cpuMin = int(config.get('sge-cpu').split('-')[0])
-            cmd += ['--n_cpus', str(max(1, cpuMin - 1))]
-        if config.get('notrack'):
-            cmd.append('--notrack')
-        if config.get('skip_bids_validation'):
-            cmd.append('--skip-bids-validation')
-        if config.get('sloppy', False):
-            cmd.append('--sloppy')
-
         # Surface preprocessing options
         if config.get('fs_no_reconall', False):
             cmd.append('--fs-no-reconall')
-        if config.get('cifti_output'):
-            cmd.append('--cifti-output')
+        if not config.get('cifti_output') == 'None':
+            cmd += ['--cifti-output', config.get('cifti_output')]
         if config.get('no_submm_recon'):
             cmd.append('--no-submm-recon')
         if config.get('medial_surface_nan'):
             cmd.append('--medial-surface-nan')
+
+        # If on HPC, get the cores/memory limits
+        if config.get('sge-cpu'):
+            # Parse SGE cpu syntax, such as "4-8" or just "4"
+            cpuMin = int(config.get('sge-cpu').split('-')[0])
+            cmd += ['--nthreads', str(max(1, cpuMin - 1))]
+
+        if config.get('notrack'):
+            cmd.append('--notrack')
+        if config.get('sloppy', False):
+            cmd.append('--sloppy')
 
     logger.info(' '.join(cmd))
     with fmriprep_script.open('w') as f:
@@ -189,53 +203,25 @@ def fw_heudiconv_download():
     if extra_t2 is not None:
         get_external_bids(extra_t2, extra_t2_path)
 
-    dwi_files = [fname for fname in bids_root.glob("**/*") if "dwi/" in str(fname)]
-    if not len(dwi_files):
-        logger.warning("No DWI files found in %s", bids_root)
+    bold_files = [fname for fname in bids_root.glob("**/*") if "func/" in str(fname)]
+    if not len(bold_files):
+        logger.warning("No BOLD files found in %s", bids_root)
         return False
     return True
-
-
-def create_html_zip():
-    html_root = output_root / "fmriprep"
-    html_files = list(html_root.glob("sub-*html"))
-    if not html_files:
-        logger.warning("No html files found!")
-        return
-    html_figures = list(html_root.glob("*/figures/*"))
-    html_outputs = html_files + html_figures
-    with ZipFile(str(html_zipfile), "w") as zipf:
-        for html_output in html_outputs:
-            zipf.write(str(html_output),
-                       str(html_output.relative_to(html_root)))
-    assert html_zipfile.exists()
-
-
-def create_derivatives_zip(failed):
-    output_fname = debug_derivatives_zipfile if failed else derivatives_zipfile
-    derivatives_files = list(output_root.glob("**/*"))
-    with ZipFile(str(output_fname), "w") as zipf:
-        for derivative_f in derivatives_files:
-            zipf.write(str(derivative_f),
-                       str(derivative_f.relative_to(output_root)))
-
-
-def create_workingdir_zip():
-    working_files = list(working_dir.glob("**/*"))
-    with ZipFile(str(working_dir_zipfile), "w") as zipf:
-        for working_f in working_files:
-            zipf.write(str(working_f),
-                       str(working_f.relative_to(working_dir)))
 
 
 def main():
 
     download_ok = fw_heudiconv_download()
+    sys.stdout.flush()
+    sys.stderr.flush()
     if not download_ok:
         logger.warning("Critical error while trying to download BIDS data.")
         return 1
 
     command_ok = write_fmriprep_command()
+    sys.stdout.flush()
+    sys.stderr.flush()
     if not command_ok:
         logger.warning("Critical error while trying to write fmriprep command.")
         return 1
